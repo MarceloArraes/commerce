@@ -1,0 +1,35 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h1>Auction Display</h1>
+
+<div>
+    <h3>{{auctiondisplay}}</h3>
+
+    <form action="{% url 'newcomment' auctiondisplay.id %}" method="POST">
+        {% csrf_token %}
+        <div>{{comment}}</div>
+        <input type="submit" value="Comment">
+    </form>
+
+    {% for comm in commentsall %}
+    <h3>{{ comm }}</h3>
+    {% endfor %}
+
+</div>
+<div>
+    <form action="{% url 'newbiding' auctiondisplay.id %}" method="POST">
+        {% csrf_token %}
+        {{ BidsForm }}
+        <input type="submit" value="bid">
+    </form>
+
+    {% for bids in bidsall %}
+    {% if bids.auction.id == auctiondisplay.id %}
+    <h3>Bid: {{bids.bid}} for the "{{bids.auction.title}}"</h3>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Active Listings</h2>
+
+<a href="{% url 'newListing'  %}">newListing Page</a>
+
+<div>
+    <a href="{%url 'listListing' %}">LIST THE AUCTIONS</a>
+</div>
+
+{% endblock %}

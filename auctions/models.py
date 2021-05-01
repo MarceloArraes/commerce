@@ -28,7 +28,7 @@ class AuctionListing(models.Model):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}"
 
 # specify a title for the listing!, a text-based description!, and what the starting bid should be!. Users should
-    # also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.)
+# also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.)
 
 
 class Bids(models.Model):

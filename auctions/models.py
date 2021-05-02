@@ -37,9 +37,11 @@ class Bids(models.Model):
     # registro de usuario com foreignkey
     auction = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="auctionbid", default=1.1)
+    userbid = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="userbid")
 
     def __str__(self):
-        return f"{self.bid} and {self.auction}"
+        return f"{self.bid} and {self.auction} of the user:{self.userbid}"
 
 
 class Comments(models.Model):

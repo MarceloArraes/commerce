@@ -19,7 +19,8 @@
 
 </div>
 <div>
-    <form action="{% url 'newbiding' auctiondisplay.id %}" method="POST">
+    <form action="{% url 'newbiding' auctiondisplay.id user.id %}" method="POST">
+        {{user}}
         {% csrf_token %}
         {{ BidsForm }}
         <input type="submit" value="bid">
@@ -27,7 +28,7 @@
 
     {% for bids in bidsall %}
     {% if bids.auction.id == auctiondisplay.id %}
-    <h3>Bid: {{bids.bid}} for the "{{bids.auction.title}}"</h3>
+    <h3>Bid: {{bids.bid}} for the "{{bids.auction.title}} made by {{ bids.userbid }}"</h3>
     {% endif %}
     {% endfor %}
 </div>

@@ -25,7 +25,7 @@ class CategoryForm(ModelForm):
 class BidsForm(ModelForm):
     class Meta:
         model = Bids
-        exclude = ['auction']
+        exclude = ['userbid', 'auction']
 
 
 class CommentsForm(ModelForm):
@@ -79,12 +79,13 @@ def display(request, auction_id):
 
 
 @login_required
-def newbiding(request, auction_id):
+def newbiding(request, auction_id, user):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
         bidding = BidsForm(request.POST)
         f = bidding.save(commit=False)
         f.auction = auction1
+        f.userbid = User.objects.get(pk=user)
         if bidding.is_valid():
             if f.bid > auction1.price:
                 print(f.auction)

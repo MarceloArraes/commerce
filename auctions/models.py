@@ -45,10 +45,13 @@ class Bids(models.Model):
 
 
 class Comments(models.Model):
-    commentarea = models.CharField(max_length=256, blank="", default="")
+    commentarea = models.CharField(
+        max_length=256, blank="", default="")
     auction = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="auctioncomment", default="default")
+    usercomment = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="usercomment")
     # user that made the comment, aqui fica o foreight do usuario
 
     def __str__(self):
-        return f"{self.commentarea}"
+        return f"{self.commentarea} by {self.usercomment}"

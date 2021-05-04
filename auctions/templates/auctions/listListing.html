@@ -3,12 +3,12 @@
 {% block body %}
 
 <ul>
-    <li>Listings-></li>
     {% for listing in listListing %}
     <li>
         <a href="{% url 'auctiondisplay' listing.id %}">{{listing}}</a>
         <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
     </li>
+    <hr>
     {% endfor %}
 </ul>
 
@@ -17,10 +17,11 @@
     <h2>CATEGORYS:</h2>
     {% for x,y in categorys %}
     <div>
-        <li>{{x}}
-            <img src="{{y}}" alt="BLANK" style="width: 5%">
+        <li>{{x}}:
+            <img src="{{y}}" alt="BLANK" style="width: 5%;margin: 1%;">
         </li>
     </div>
+    <hr>
     {% endfor %}
 </ol>
 

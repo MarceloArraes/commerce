@@ -31,7 +31,7 @@ class BidsForm(ModelForm):
 class CommentsForm(ModelForm):
     class Meta:
         model = Comments
-        exclude = ['auction']
+        exclude = ['auction', 'usercomment']
 
 
 def index(request):
@@ -79,13 +79,13 @@ def display(request, auction_id):
 
 
 @login_required
-def newbiding(request, auction_id, user):
+def newbiding(request, auction_id, user_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
         bidding = BidsForm(request.POST)
         f = bidding.save(commit=False)
         f.auction = auction1
-        f.userbid = User.objects.get(pk=user)
+        f.userbid = User.objects.get(pk=user_id)
         if bidding.is_valid():
             if f.bid > auction1.price:
                 print(f.auction)
@@ -103,14 +103,14 @@ def newbiding(request, auction_id, user):
 
 
 @login_required
-def newcomment(request, auction_id):
+def newcomment(request, auction_id, user_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
         comment = CommentsForm(request.POST)
         f = comment.save(commit=False)
         f.auction = auction1
+        f.usercomment = User.objects.get(pk=user_id)
         if comment.is_valid():
-            print(f.auction)
             f.save()
             print("COMMENT ADDED")
             return render(request, "auctions/index.html")
@@ -170,3 +170,16 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+    # Things that its missing
+    # After posting comment keep on the same page
+    # Same as bid
+    # Default da Bid = actual price
+    # Warning screen when posting the same price or lower.
+    # Date atribute on comment, auction listening, bid and whatever it needs
+    # Uppercase in the user name
+    # Maybe make the styles.css work
+    # AUTH user authentication (lower priority)
+    # WISHLIST of the user. ManytoMany field.
+    #
+    #

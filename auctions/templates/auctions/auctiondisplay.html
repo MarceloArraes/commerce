@@ -2,7 +2,10 @@
 
 {% block body %}
 
+
+
 <h1>{{auctiondisplay.title}}</h1>
+
 
 <div>
     <img src="{{auctiondisplay.image}}" class="img-fluid img-thumbnail" style="max-width: 35%;" alt="BLANK">
@@ -20,9 +23,14 @@
     </form>
 
     {% for comm in commentsall %}
+    {% if comm.auction == auctiondisplay %}
     <h6 class="border" style="max-width: 50%;">
-        <p> {{ comm }} <br> by {{ comm.usercomment }}</p>
+        <p> {{ comm.commentarea }} <br> by {{ comm.usercomment }}
+            <br>
+            <cite style="font-size: 75%;">{{ comm.datecreate }}</cite>
+        </p>
     </h6>
+    {% endif %}
     {% endfor %}
 
 </div>
@@ -36,7 +44,10 @@
     {% for bids in bidsall %}
     {% if bids.auction.id == auctiondisplay.id %}
     <h4 class="border" style="max-width: 50%;">Bid: {{bids.bid}} for the "{{bids.auction.title}}" <br>
-        by {{bids.userbid}}</h4>
+        by {{bids.userbid}}
+        <br><cite style="font-size: 75%;">{{ bids.datecreate }}</cite>
+    </h4>
+
     {% endif %}
     {% endfor %}
 </div>

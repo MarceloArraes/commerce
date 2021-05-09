@@ -23,6 +23,7 @@ class AuctionListing(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="auctioncategory")
     price = models.FloatField(blank=0.0, default=1.0)
+    datecreate = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}"
@@ -39,6 +40,7 @@ class Bids(models.Model):
         AuctionListing, on_delete=models.CASCADE, related_name="auctionbid", default=1.1)
     userbid = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="userbid")
+    datecreate = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.bid} and {self.auction} of the user:{self.userbid}"
@@ -51,6 +53,7 @@ class Comments(models.Model):
         AuctionListing, on_delete=models.CASCADE, related_name="auctioncomment", default="default")
     usercomment = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="usercomment")
+    datecreate = models.DateTimeField(auto_now_add=True)
     # user that made the comment, aqui fica o foreight do usuario
 
     def __str__(self):

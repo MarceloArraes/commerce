@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
+    path("auctions/inputerror", views.inputerror, name="inputerror"),
     path("accounts/login/", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
@@ -15,7 +16,6 @@ urlpatterns = [
          views.newbiding, name="newbiding"),
     path("auctions/<int:auction_id>/<int:user_id>/comment",
          views.newcomment, name="newcomment"),
-
 
 
 ]

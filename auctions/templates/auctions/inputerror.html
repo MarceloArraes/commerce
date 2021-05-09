@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="alert alert-info" role="alert">
+    <h2>{{simplealert}}</h2>
+</div>
+
+
+<h2>Options for {{ user.username }}: </h2>
+
+<a href="{% url 'index' %}" class="list-group-item list-group-item-action" style="max-width: 35%">HOME PAGE</a>
+
+<div>
+    <a href="{% url 'listListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">See
+        Listings available</a>
+</div>
+
+{% endblock %}

@@ -25,24 +25,29 @@ class CategoryForm(ModelForm):
 class BidsForm(ModelForm):
     class Meta:
         model = Bids
-        exclude = ['userbid', 'auction']
+        exclude = ['userbid', 'auction', 'datecreate']
 
 
 class CommentsForm(ModelForm):
     class Meta:
         model = Comments
-        exclude = ['auction', 'usercomment']
+        exclude = ['auction', 'usercomment', 'datecreate']
 
 
 def index(request):
     return render(request, "auctions/index.html")
 
 
+def inputerror(request):
+    return render(request, "auctions/inputerror.html")
+
+
 def listing(request):
     d = Category.objects.values().values_list("categoryname", "categoryimage")
     # tentar juntar os 2 em um dictionary
+    listing = AuctionListing.objects.all()
     return render(request, "auctions/listListing.html", {
-        "listListing": AuctionListing.objects.all(),
+        "listListing": listing,
         "categorys": d,
     })
 
@@ -66,15 +71,13 @@ def display(request, auction_id):
     auctiondisplayall = AuctionListing.objects.all()
     commentsdisplayall = Comments.objects.all()
     bidsall = Bids.objects.all()
-
     return render(request, "auctions/auctiondisplay.html", {
         "auctiondisplay": auctiondisplay,
         "auctiondisplayall": auctiondisplayall,
-        "bidsall": bidsall.all(),
+        "bidsall": reversed(bidsall.all()),
         "BidsForm": BidsForm(),
         "comment": CommentsForm(),
-        "commentsall": commentsdisplayall,
-
+        "commentsall": reversed(commentsdisplayall),
     })
 
 
@@ -93,16 +96,18 @@ def newbiding(request, auction_id, user_id):
                 auction1.save()
                 f.save()
                 print("CHANGED PRICETAG")
-                return render(request, "auctions/index.html")
+                return display(request, auction_id)
             else:
                 print("Bidding need to get higher!")
-                return render(request, "auctions/index.html")
+                return render(request, "auctions/inputerror.html", {
+                    "simplealert": f"Bidding need to get Higher than {auction1.price}"
+                })
     else:
         print("invalid bidding")
-        return render(request, "auctions/index.html")
+        return display(request, auction_id)
 
 
-@login_required
+@ login_required
 def newcomment(request, auction_id, user_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
@@ -113,10 +118,12 @@ def newcomment(request, auction_id, user_id):
         if comment.is_valid():
             f.save()
             print("COMMENT ADDED")
-            return render(request, "auctions/index.html")
+            return display(request, auction_id)
         else:
             print("Invalid Comment")
-            return render(request, "auctions/index.html")
+            return render(request, "auctions/inputerror.html", {
+                "simplealert": "Invalid comment"
+            })
     else:
         print("Not METHOD POST COMMENT")
         return render(request, "auctions/index.html")

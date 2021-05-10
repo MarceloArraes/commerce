@@ -14,13 +14,31 @@
         <p>{{auctiondisplay.descript}}<br>PRICE: ${{auctiondisplay.price}}<br>{{auctiondisplay.category}} </p>
     </h2>
 
+    {% if user.id %}
+    <!--
+    Aqui tentar criar um botão para add para wishlist
+    -->
 
-    <form action="{% url 'newcomment' auctiondisplay.id user.id %}" method="POST">
+    <form action="{% url 'wishlist' auctiondisplay.id user.id  %}" method="POST">
+        {% csrf_token %}
+        <input class="form-check-input" type="submit">Add to wishlist
+    </form>
+    {% endif %}
+
+
+    {% if user.id %}
+    <form action="{% url 'newcomment' auctiondisplay.id user.id  %}" method="POST">
         {% csrf_token %}
         <div>{{comment.commentarea}}
             <input type="submit" value="Comment" style="margin: 2%;">
         </div>
     </form>
+    {% else %}
+    <h2>
+        <p><br><a class="alert alert-secondary" href="{% url 'register' %}" style="color: rgb(92, 0, 0);">Comment</a>
+    </h2><br>
+    </p>
+    {% endif %}
 
     {% for comm in commentsall %}
     {% if comm.auction == auctiondisplay %}
@@ -35,12 +53,21 @@
 
 </div>
 <div>
+    {% if user.id %}
     <form action="{% url 'newbiding' auctiondisplay.id user.id %}" method="POST">
         {% csrf_token %}
         {{ BidsForm.bid }}
         <input type="submit" value="bid" style="margin: 2%;">
     </form>
+    {% else %}
+    <h2>
+        <p><br><a class="alert alert-secondary" href="{% url 'register' %}" style="color: rgb(92, 0, 0);">Make a
+                Bid</a>
+    </h2><br>
+    </p>
 
+
+    {% endif %}
     {% for bids in bidsall %}
     {% if bids.auction.id == auctiondisplay.id %}
     <h4 class="border" style="max-width: 50%;">Bid: {{bids.bid}} for the "{{bids.auction.title}}" <br>

@@ -2,21 +2,10 @@
 
 {% block body %}
 
-<h1>{{auctiondisplay.title}}</h1>
-
-<ul>
-    {% for listing in listListing %}
-    <li>
-        <a href="{% url 'auctiondisplay' listing.id %}">{{listing}}</a>
-        <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
-    </li>
-    <hr>
-    {% endfor %}
-</ul>
-
+<p><br>
+<h1>Categorys available:</h1>
 
 <ol>
-    <h2>CATEGORYS:</h2>
     {% for x,y in categorys %}
     <div>
         <li>{{x}}:
@@ -28,7 +17,7 @@
 </ol>
 
 
-
+</p>
 
 
 {% endblock %}

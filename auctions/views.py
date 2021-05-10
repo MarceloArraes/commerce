@@ -35,7 +35,9 @@ class CommentsForm(ModelForm):
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listofauctions": AuctionListing.objects.all()
+    })
 
 
 def inputerror(request):
@@ -107,7 +109,7 @@ def newbiding(request, auction_id, user_id):
         return display(request, auction_id)
 
 
-@ login_required
+@login_required
 def newcomment(request, auction_id, user_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
@@ -127,6 +129,24 @@ def newcomment(request, auction_id, user_id):
     else:
         print("Not METHOD POST COMMENT")
         return render(request, "auctions/index.html")
+
+
+def wishlistpage(request):
+    return render(request, "auctions/wishlistpage.html")
+
+
+def wishlist(request, auction_id, user_id):
+    if request.method == "POST":
+        auction1 = AuctionListing.objects.get(pk=auction_id)
+        user1 = User.objects.get(pk=user_id)
+
+        wish = UserWishlist(auctions=auction1,
+                            priceonmoment=auction1.price, users=user1)
+        wish.save()
+        print(wish)
+        print(user1.userwishes.all)
+        return display(request, auction_id)
+        # NOT WORKING
 
 
 def login_view(request):

@@ -16,6 +16,9 @@ urlpatterns = [
          views.newbiding, name="newbiding"),
     path("auctions/<int:auction_id>/<int:user_id>/comment",
          views.newcomment, name="newcomment"),
+    path("auctions/<int:auction_id>/<int:user_id>/wishlist",
+         views.wishlist, name="wishlist"),
+    path("auctions/wishlistpage", views.wishlistpage, name="wishlistpage"),
 
 
 ]

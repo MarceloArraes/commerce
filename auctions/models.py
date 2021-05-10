@@ -3,10 +3,6 @@ from django.db import models
 from django import forms
 
 
-class User(AbstractUser):
-    pass
-
-
 class Category(models.Model):
     categoryname = models.CharField(max_length=32)
     categoryimage = models.URLField(
@@ -25,11 +21,28 @@ class AuctionListing(models.Model):
     price = models.FloatField(blank=0.0, default=1.0)
     datecreate = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['title']
+
     def __str__(self):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}"
 
 # specify a title for the listing!, a text-based description!, and what the starting bid should be!. Users should
 # also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.)
+
+
+class User(AbstractUser):
+    userwishes = models.ManyToManyField(
+        AuctionListing, through='UserWishlist', default=None)
+
+
+class UserWishlist(models.Model):
+    priceonmoment = models.FloatField()
+    auctions = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
+    users = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Favorite product: {self.auctions.title} of user: {self.users}"
 
 
 class Bids(models.Model):

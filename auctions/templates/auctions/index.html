@@ -7,9 +7,36 @@
 <a href="{% url 'newListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">Add new
     Listing</a>
 
+
+<a href="{%url 'listListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">See
+    categorys available</a>
+
+
 <div>
-    <a href="{%url 'listListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">See
-        Listings available</a>
+    <p>
+        <br>
+    <h2>List of Auctions: </h1>
+        <ul>
+            {% for listing in listofauctions %}
+            <li>
+                <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
+                <a href="{% url 'auctiondisplay' listing.id %}">
+                    <p>{{listing.title}}
+                        <br>{{listing.descript}}
+                        <br>{{listing.category}}
+                        <br>{{listing.price}}
+                    </p>
+                </a>
+            </li>
+            <hr>
+            {% endfor %}
+        </ul>
+        </p>
 </div>
+
+
+
+<h2>{{user.wishlist}}</h2>
+
 
 {% endblock %}

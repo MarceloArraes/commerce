@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h1>List of wishes</h1>
+
+<ul class="list-group" style="width: 30%;">
+    {% for wishes in user.userwishes.all %}
+    <p>
+        <li class="list-group-item">
+            <br><img src="{{wishes.image}}" alt="BLANK" style="width: 20%;">
+            <br>{{wishes.title}}
+            <br>{{wishes.descript}}
+            <br>{{wishes.price}}
+            <br>
+            <a href="{% url 'auctiondisplay' wishes.id %}">{{wishes.title}} Page</a>
+    </p>
+    </li>
+    {% endfor %}
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

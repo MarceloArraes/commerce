@@ -73,6 +73,8 @@ def display(request, auction_id):
     auctiondisplayall = AuctionListing.objects.all()
     commentsdisplayall = Comments.objects.all()
     bidsall = Bids.objects.all()
+    wishlists = UserWishlist.objects.all()
+
     return render(request, "auctions/auctiondisplay.html", {
         "auctiondisplay": auctiondisplay,
         "auctiondisplayall": auctiondisplayall,
@@ -80,17 +82,18 @@ def display(request, auction_id):
         "BidsForm": BidsForm(),
         "comment": CommentsForm(),
         "commentsall": reversed(commentsdisplayall),
+        "wishlists": wishlists
     })
 
 
 @login_required
-def newbiding(request, auction_id, user_id):
+def newbiding(request, auction_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
         bidding = BidsForm(request.POST)
         f = bidding.save(commit=False)
         f.auction = auction1
-        f.userbid = User.objects.get(pk=user_id)
+        f.userbid = User.objects.get(pk=request.user.id)
         if bidding.is_valid():
             if f.bid > auction1.price:
                 print(f.auction)
@@ -110,13 +113,13 @@ def newbiding(request, auction_id, user_id):
 
 
 @login_required
-def newcomment(request, auction_id, user_id):
+def newcomment(request, auction_id):
     if request.method == "POST":
         auction1 = AuctionListing.objects.get(pk=auction_id)
         comment = CommentsForm(request.POST)
         f = comment.save(commit=False)
         f.auction = auction1
-        f.usercomment = User.objects.get(pk=user_id)
+        f.usercomment = User.objects.get(pk=request.user.id)
         if comment.is_valid():
             f.save()
             print("COMMENT ADDED")
@@ -135,17 +138,21 @@ def wishlistpage(request):
     return render(request, "auctions/wishlistpage.html")
 
 
-def wishlist(request, auction_id, user_id):
+def wishlist(request, auction_id):
+    print(request.user)
     if request.method == "POST":
-        auction1 = AuctionListing.objects.get(pk=auction_id)
-        user1 = User.objects.get(pk=user_id)
+        if request.input == "Add to wishlist":
+            auction1 = AuctionListing.objects.get(pk=request.user.id)
+            user1 = User.objects.get(pk=request.user.id)
 
-        wish = UserWishlist(auctions=auction1,
-                            priceonmoment=auction1.price, users=user1)
-        wish.save()
-        print(wish)
-        print(user1.userwishes.all)
-        return display(request, auction_id)
+            wish = UserWishlist(auctions=auction1,
+                                priceonmoment=auction1.price, users=user1)
+            wish.save()
+            print(wish)
+            print(user1.userwishes.all)
+            return display(request, auction_id)
+        else:
+            print("didnt work")
         # NOT WORKING
 
 

@@ -13,7 +13,7 @@ from .models import *
 class AuctionListingForm(ModelForm):
     class Meta:
         model = AuctionListing
-        fields = "__all__"
+        exclude = ['userauction']
 
 
 class CategoryForm(ModelForm):
@@ -35,8 +35,10 @@ class CommentsForm(ModelForm):
 
 
 def index(request):
+    auctionfinish = AuctionFinished.objects.all()
     return render(request, "auctions/index.html", {
-        "listofauctions": AuctionListing.objects.all()
+        "listofauctions": AuctionListing.objects.all(),
+        "auctionfinish": auctionfinish
     })
 
 
@@ -58,12 +60,15 @@ def listing(request):
 def new_listing(request):
     if request.method == "POST":
         form = AuctionListingForm(request.POST)
+        f = form.save(commit=False)
+        f.userauction = request.user
         if(form.is_valid()):
-            form.save()
+            f.save()
             return render(request, "auctions/newListing.html", {
-                "listingForm": "SAVED.YEAH POST WORKING"
+                "listingForm": "SAVED. YEAH POST WORKING"
             })
     return render(request, "auctions/newListing.html", {
+        "isnew": True,
         "listingForm": AuctionListingForm(),
     })
 
@@ -75,6 +80,14 @@ def display(request, auction_id):
     bidsall = Bids.objects.all()
     wishlists = UserWishlist.objects.all()
 
+    onwithlist = True
+    endauction = False
+    if wishlists.filter(auctions=auctiondisplay, users=request.user):
+        print(wishlists.filter(auctions=auctiondisplay))
+        onwithlist = False
+    if auctiondisplay.userauction == request.user.username:
+        endauction = True
+
     return render(request, "auctions/auctiondisplay.html", {
         "auctiondisplay": auctiondisplay,
         "auctiondisplayall": auctiondisplayall,
@@ -82,7 +95,10 @@ def display(request, auction_id):
         "BidsForm": BidsForm(),
         "comment": CommentsForm(),
         "commentsall": reversed(commentsdisplayall),
-        "wishlists": wishlists
+        "wishlists": wishlists,
+        "onwithlist": onwithlist,
+        "endauction": endauction,
+
     })
 
 
@@ -134,26 +150,54 @@ def newcomment(request, auction_id):
         return render(request, "auctions/index.html")
 
 
+@login_required
 def wishlistpage(request):
     return render(request, "auctions/wishlistpage.html")
 
 
+@login_required
 def wishlist(request, auction_id):
-    print(request.user)
     if request.method == "POST":
-        if request.input == "Add to wishlist":
-            auction1 = AuctionListing.objects.get(pk=request.user.id)
-            user1 = User.objects.get(pk=request.user.id)
+        auction1 = AuctionListing.objects.get(pk=auction_id)
+        user1 = User.objects.get(pk=request.user.id)
 
-            wish = UserWishlist(auctions=auction1,
-                                priceonmoment=auction1.price, users=user1)
-            wish.save()
-            print(wish)
-            print(user1.userwishes.all)
-            return display(request, auction_id)
-        else:
-            print("didnt work")
-        # NOT WORKING
+        wish = UserWishlist(auctions=auction1,
+                            priceonmoment=auction1.price, users=user1)
+        wish.save()
+        return display(request, auction_id)
+        # Working i guess
+
+
+@login_required
+def unwishlist(request, auction_id):
+    if request.method == "POST":
+        auction1 = AuctionListing.objects.get(pk=auction_id)
+        unwish = UserWishlist.objects.filter(
+            users=request.user.id)
+        for x in unwish:
+            if x.auctions == auction1:
+                x.delete()
+        print(unwish)
+        return display(request, auction_id)
+        # WORKING
+
+
+@login_required
+def endauction(request, auction_id):
+    if request.method == 'POST':
+        auction1 = AuctionListing.objects.get(pk=auction_id)
+        auctionfinal = AuctionFinished()
+        auctionfinal.title = auction1.title
+        auctionfinal.descript = auction1.descript
+        auctionfinal.price = auction1.price
+        auctionfinal.image = auction1.image
+        auctionfinal.userauction = auction1.userauction
+        auctionfinal.datecreate = auction1.datecreate
+        auctionfinal.save()
+        auction1.delete()
+        # auction1.save()
+        print(auctionfinal)
+        return index(request)
 
 
 def login_view(request):
@@ -206,9 +250,6 @@ def register(request):
         return render(request, "auctions/register.html")
 
     # Things that its missing
-    # After posting comment keep on the same page
-    # Same as bid
-    # Default da Bid = actual price
     # Warning screen when posting the same price or lower.
     # Date atribute on comment, auction listening, bid and whatever it needs
     # Uppercase in the user name

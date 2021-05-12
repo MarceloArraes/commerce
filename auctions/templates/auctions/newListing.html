@@ -2,19 +2,25 @@
 
 
 {% block body %}
-<h2>New Listing</h2>
+
 
 <!--specify a title for the listing, a text-based description, and what the starting bid should be. Users should
     also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.).!-->
 
+{% if isnew %}
+<h2>New Listing</h2>
 <form action="{% url 'newListing' %}" method="post">
     {% csrf_token %}
-    {{listingForm}}
+    {{listingForm.as_p}}
     <h2>CATEGORY:</h2>
     <div></div>
     <div style="margin-top: 2%;">
         <input type="submit" value="Save">
     </div>
 </form>
-
+{% else %}
+<p><br>
+<h1>Auction Saved</h1>
+</p>
+{% endif %}
 {% endblock %}

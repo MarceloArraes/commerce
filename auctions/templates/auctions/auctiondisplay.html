@@ -17,20 +17,30 @@
     <!--
     BOTOES DE WISH AND UNWISH
     -->
+    {% if onwithlist %}
     <p>
     <form action="{% url 'wishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
         {% csrf_token %}
         <input class="form-check-input" type="submit" value="Add to wishlist" style="margin:2%;">
     </form>
     </p>
+    {% else %}
     <p>
-    <form action="{% url 'wishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
+    <form action="{% url 'unwishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
         {% csrf_token %}
         <input class="form-check-input" type="submit" value="UnWish" style="margin:2%;">
     </form>
     </p>
+    {% endif %}
 
-
+    {%if endauction%}
+    <p>
+    <form action="{% url 'endauction' auctiondisplay.id  %}" method="POST" style="padding:2%;">
+        {% csrf_token %}
+        <input class="form-check-input" type="submit" value="endauction" style="margin:2%;">
+    </form>
+    </p>
+    {% endif %}
 
 
     {% if user.id %}
@@ -45,7 +55,6 @@
     {% endif %}
     {% endfor %}
 
-    </p>
     {% endif %}
 
 

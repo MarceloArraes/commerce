@@ -35,8 +35,25 @@
 </div>
 
 
-
-<h2>{{user.wishlist}}</h2>
+{% if auctionfinish %}
+<p><br>
+<h2>Completed Auctions: </h2>
+<div>
+    {% for auction in auctionfinish %}
+    <div>
+        <br><img src="{{auction.image}}" alt="BLANK" style="width: 7%;">
+        <br>Title: {{auction.title}}
+        <br>Description: {{auction.descript}}
+        <br>Final Price: {{auction.price}}
+        <br>Winner: {{auction.userauction}}
+        <br>Time of Closing: {{auction.datefinished}}
+        <br>
+    </div>
+    <hr>
+    {% endfor %}
+    </p>
+</div>
+{% endif %}
 
 
 {% endblock %}

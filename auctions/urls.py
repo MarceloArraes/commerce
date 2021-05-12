@@ -18,7 +18,10 @@ urlpatterns = [
          views.newcomment, name="newcomment"),
     path("auctions/<int:auction_id>/wishlist",
          views.wishlist, name="wishlist"),
+    path("auctions/<int:auction_id>/unwishlist",
+         views.unwishlist, name="unwishlist"),
     path("auctions/wishlistpage", views.wishlistpage, name="wishlistpage"),
-
+    path("auctions/<int:auction_id>/endauction",
+         views.endauction, name="endauction"),
 
 ]

@@ -1,9 +1,13 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
+{% if user.userwishes.all %}
 <h1>List of wishes</h1>
-
+{% else %}
+<p><br>
+<h2>The Wishlist is Empty</h2>
+</p>
+{% endif %}
 <ul class="list-group" style="width: 30%;">
     {% for wishes in user.userwishes.all %}
     <p>

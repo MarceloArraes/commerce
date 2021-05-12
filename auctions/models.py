@@ -20,12 +20,30 @@ class AuctionListing(models.Model):
         Category, on_delete=models.CASCADE, related_name="auctioncategory")
     price = models.FloatField(blank=0.0, default=1.0)
     datecreate = models.DateTimeField(auto_now_add=True)
+    userauction = models.CharField(
+        max_length=64)
 
     class Meta:
         ordering = ['title']
 
     def __str__(self):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}"
+
+
+class AuctionFinished(models.Model):
+    title = models.CharField(max_length=64)
+    descript = models.CharField(max_length=128)
+    image = models.URLField()
+    category = models.CharField(max_length=64)
+    price = models.FloatField(blank=0.0, default=1.0)
+    datecreate = models.DateTimeField()
+    datefinished = models.DateTimeField(auto_now_add=True)
+    userauction = models.CharField(
+        max_length=64)
+
+    def __str__(self):
+        return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}, closing time: {self.datefinished}"
+
 
 # specify a title for the listing!, a text-based description!, and what the starting bid should be!. Users should
 # also optionally be able to provide a URL for an image for the listing and/or a category (e.g. Fashion, Toys, Electronics, Home, etc.)
@@ -46,7 +64,7 @@ class UserWishlist(models.Model):
 
 
 class Bids(models.Model):
-    bid = models.FloatField(blank=0.0, default=1.0)
+    bid = models.FloatField(blank=0.0)
     # date automatico pra momento, hippeninput. (!!)
     # registro de usuario com foreignkey
     auction = models.ForeignKey(

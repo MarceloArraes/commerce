@@ -23,5 +23,7 @@ urlpatterns = [
     path("auctions/wishlistpage", views.wishlistpage, name="wishlistpage"),
     path("auctions/<int:auction_id>/endauction",
          views.endauction, name="endauction"),
+    path("auctions/<str:category1>",
+         views.auctionCat, name="auctionCat"),
 
 ]

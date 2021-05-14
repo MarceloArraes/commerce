@@ -22,6 +22,7 @@ class AuctionListing(models.Model):
     datecreate = models.DateTimeField(auto_now_add=True)
     userauction = models.CharField(
         max_length=64)
+    openess = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['title']
@@ -40,6 +41,7 @@ class AuctionFinished(models.Model):
     datefinished = models.DateTimeField(auto_now_add=True)
     userauction = models.CharField(
         max_length=64)
+    winner = models.CharField(max_length=64, default="")
 
     def __str__(self):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}, closing time: {self.datefinished}"

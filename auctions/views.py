@@ -13,7 +13,7 @@ from .models import *
 class AuctionListingForm(ModelForm):
     class Meta:
         model = AuctionListing
-        exclude = ['userauction']
+        exclude = ['userauction', 'openess']
 
 
 class CategoryForm(ModelForm):
@@ -39,6 +39,15 @@ def index(request):
     return render(request, "auctions/index.html", {
         "listofauctions": AuctionListing.objects.all(),
         "auctionfinish": auctionfinish
+    })
+
+
+def auctionCat(request, category1):
+    auctionfinish = AuctionFinished.objects.all()
+    return render(request, "auctions/auctioncategory.html", {
+        "listofauctions": AuctionListing.objects.all(),
+        "auctionfinish": auctionfinish,
+        "category": category1
     })
 
 
@@ -187,16 +196,25 @@ def endauction(request, auction_id):
     if request.method == 'POST':
         auction1 = AuctionListing.objects.get(pk=auction_id)
         auctionfinal = AuctionFinished()
+        bid = Bids.objects.all()
+        lastbid = bid.filter(auction=auction1).last()
+        print(lastbid)
         auctionfinal.title = auction1.title
         auctionfinal.descript = auction1.descript
         auctionfinal.price = auction1.price
         auctionfinal.image = auction1.image
         auctionfinal.userauction = auction1.userauction
         auctionfinal.datecreate = auction1.datecreate
+        auctionfinal.category = auction1.category.categoryname
+        if lastbid:
+            auctionfinal.winner = lastbid.userbid
+        else:
+            auctionfinal.winner = "No Winner"
+        print(auctionfinal.winner)
+
         auctionfinal.save()
-        auction1.delete()
-        # auction1.save()
-        print(auctionfinal)
+        auction1.openess = False
+        auction1.save()
         return index(request)
 
 

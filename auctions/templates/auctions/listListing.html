@@ -8,7 +8,7 @@
 <ol>
     {% for x,y in categorys %}
     <div>
-        <li>{{x}}:
+        <li> <a href="{% url 'auctionCat' x %}">{{x}}:</a>
             <img src="{{y}}" alt="BLANK" style="width: 5%;margin: 1%;">
         </li>
     </div>

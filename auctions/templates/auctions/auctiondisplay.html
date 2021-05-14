@@ -2,6 +2,11 @@
 
 {% block body %}
 
+{% if auctiondisplay.openess == False %}
+<div class="alert alert-info" role="alert">
+    Auction Closed!
+</div>
+{% endif %}
 
 
 <h1>{{auctiondisplay.title}}</h1>
@@ -17,13 +22,14 @@
     <!--
     BOTOES DE WISH AND UNWISH
     -->
-    {% if onwithlist %}
+    {% if onwithlist and auctiondisplay.openess %}
     <p>
     <form action="{% url 'wishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
         {% csrf_token %}
         <input class="form-check-input" type="submit" value="Add to wishlist" style="margin:2%;">
     </form>
     </p>
+    {% elif auctiondisplay.openess == False %}
     {% else %}
     <p>
     <form action="{% url 'unwishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
@@ -33,7 +39,7 @@
     </p>
     {% endif %}
 
-    {%if endauction%}
+    {%if endauction and auctiondisplay.openess %}
     <p>
     <form action="{% url 'endauction' auctiondisplay.id  %}" method="POST" style="padding:2%;">
         {% csrf_token %}
@@ -43,28 +49,16 @@
     {% endif %}
 
 
-    {% if user.id %}
-    <!--
-    Aqui tentar criar um botão para add para wishlist
-    -->
-    {% for wishes in wishlists %}
-
-    {% if wishes.users == user and wishes.auctions == auctiondisplay %}
-
-
-    {% endif %}
-    {% endfor %}
-
-    {% endif %}
-
-
-    {% if user.id %}
+    {% if user.id and auctiondisplay.openess %}
     <form action="{% url 'newcomment' auctiondisplay.id  %}" method="POST">
         {% csrf_token %}
         <div>{{comment.commentarea}}
             <input type="submit" value="Comment" style="margin: 2%;">
         </div>
     </form>
+    {% elif auctiondisplay.openess == False %}
+    <br>
+    <h1>Auction Closed - no further comments alowed</h1>
     {% else %}
     <h2>
         <p><br><a class="alert alert-secondary" href="{% url 'login' %}" style="color: rgb(92, 0, 0);">Comment</a>
@@ -85,12 +79,15 @@
 
 </div>
 <div>
-    {% if user.id %}
+    {% if user.id and auctiondisplay.openess %}
     <form action="{% url 'newbiding' auctiondisplay.id %}" method="POST">
         {% csrf_token %}
         {{ BidsForm.bid }}
         <input type="submit" value="bid" style="margin: 2%;">
     </form>
+    {% elif auctiondisplay.openess == False %}
+    <br>
+    <h1>Auction Closed - no further bidding alowed</h1>
     {% else %}
     <h2>
         <p><br><a class="alert alert-secondary" href="{% url 'login' %}" style="color: rgb(92, 0, 0);">Make a

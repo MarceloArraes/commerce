@@ -2,15 +2,6 @@
 
 {% block body %}
 
-<h2>Options for {{ user.username }}: </h2>
-
-<a href="{% url 'newListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">Add new
-    Listing</a>
-
-
-<a href="{%url 'listListing' %}" class="list-group-item list-group-item-action" style="max-width: 35%">See
-    categorys available</a>
-
 
 <div>
     <p>
@@ -19,6 +10,7 @@
         <ul>
             {% for listing in listofauctions %}
             {% if listing.openess %}
+            {% if category == listing.category.categoryname %}
             <li>
                 <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
                 <a href="{% url 'auctiondisplay' listing.id %}">
@@ -34,6 +26,7 @@
             </li>
             <hr>
             {% endif %}
+            {% endif %}
             {% endfor %}
         </ul>
         </p>
@@ -45,6 +38,7 @@
 <h2>Completed Auctions: </h2>
 <div>
     {% for auction in auctionfinish %}
+    {% if auction.category == category %}
     <div>
         <br><img src="{{auction.image}}" alt="BLANK" style="width: 7%;">
         <br>Title: {{auction.title}}
@@ -55,10 +49,15 @@
         <br>
     </div>
     <hr>
+    {% endif %}
     {% endfor %}
     </p>
 </div>
 {% endif %}
+
+
+
+
 
 
 {% endblock %}

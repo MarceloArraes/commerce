@@ -194,8 +194,6 @@ def endauction(request, auction_id):
         else:
             auction1.winner = "No Winner"
 
-        auction1.save()
-        auction1.datefinished = date.today()
         auction1.openess = False
         auction1.save()
         return index(request)

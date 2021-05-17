@@ -24,7 +24,7 @@ class AuctionListing(models.Model):
         max_length=64)
     openess = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, default="")
-    datefinished = models.DateTimeField(default=date.today)
+    datefinished = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['title']

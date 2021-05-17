@@ -19,18 +19,19 @@
         <ul>
             {% for listing in listofauctions %}
             {% if listing.openess %}
-            <li>
-                <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
+            <li class="img-thumbnail" style="max-width: 40%;">
+                <div><img src={{listing.image}} alt="BLANK" class="img-thumbnail" style="width: 30%;"></div>
                 <a href="{% url 'auctiondisplay' listing.id %}">
                     <p>{{listing.title}}
-                        <br>{{listing.descript}}
-                        <br>{{listing.category}}
-                        <br>{{listing.price}}
-                        <br>Status: Open
-                        <br>
-                        <h6>Owner: {{listing.userauction}}</h6>
-                    </p>
                 </a>
+                <br>Description: {{listing.descript}}
+                <br>Category: {{listing.category}}
+                <br>Price: {{listing.price}}
+                <br>Status: Open since {{listing.datecreate}}
+                <br>
+                <h6>Owner: {{listing.userauction}}</h6>
+                </p>
+
             </li>
             <hr>
             {% endif %}
@@ -40,25 +41,35 @@
 </div>
 
 
-{% if auctionfinish %}
-<p><br>
-<h2>Completed Auctions: </h2>
+
 <div>
-    {% for auction in auctionfinish %}
-    <div>
-        <br><img src="{{auction.image}}" alt="BLANK" style="width: 7%;">
-        <br>Title: {{auction.title}}
-        <br>Description: {{auction.descript}}
-        <br>Final Price: {{auction.price}}
-        <br>Winner: {{auction.winner}}
-        <br>Time of Closing: {{auction.datefinished}}
+    <p>
         <br>
-    </div>
-    <hr>
-    {% endfor %}
-    </p>
+    <h2>List of Closed Auctions: </h1>
+        <ul>
+            {% for listing in listofauctions %}
+            {% if listing.openess == False %}
+            <li class="img-thumbnail" style="width: 40%;">
+                <div><img src={{listing.image}} alt="BLANK" class="img-thumbnail" style="width: 30%;">
+                </div>
+                <a href="{% url 'auctiondisplay' listing.id %}">
+                    <p>{{listing.title}}
+                </a>
+                <br>Description: {{listing.descript}}
+                <br>Category: {{listing.category}}
+                <br>Price: {{listing.price}}
+                <br>Status: Closed
+                <br>Winner: {{listing.winner}}
+                <br>Data of Creation: {{listing.datecreate}}
+                <br>Data of closing: {{listing.datefinished}}
+                <h6>Owner: {{listing.userauction}}</h6>
+                </p>
+
+            </li>
+            <hr>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        </p>
 </div>
-{% endif %}
-
-
 {% endblock %}

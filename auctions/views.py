@@ -1,19 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from . import models
-from django import forms
 from django.forms import ModelForm
 from .models import *
+from datetime import date
 
 
 class AuctionListingForm(ModelForm):
     class Meta:
         model = AuctionListing
-        exclude = ['userauction', 'openess']
+        exclude = ['userauction', 'openess', 'winner', 'datefinished']
 
 
 class CategoryForm(ModelForm):
@@ -35,7 +34,7 @@ class CommentsForm(ModelForm):
 
 
 def index(request):
-    auctionfinish = AuctionFinished.objects.all()
+    auctionfinish = AuctionListing.objects.filter(openess='False')
     return render(request, "auctions/index.html", {
         "listofauctions": AuctionListing.objects.all(),
         "auctionfinish": auctionfinish
@@ -43,7 +42,7 @@ def index(request):
 
 
 def auctionCat(request, category1):
-    auctionfinish = AuctionFinished.objects.all()
+    auctionfinish = AuctionListing.objects.filter(openess='False')
     return render(request, "auctions/auctioncategory.html", {
         "listofauctions": AuctionListing.objects.all(),
         "auctionfinish": auctionfinish,
@@ -91,11 +90,11 @@ def display(request, auction_id):
 
     onwithlist = True
     endauction = False
-    if wishlists.filter(auctions=auctiondisplay, users=request.user):
-        print(wishlists.filter(auctions=auctiondisplay))
-        onwithlist = False
-    if auctiondisplay.userauction == request.user.username:
-        endauction = True
+    if request.user.is_authenticated:
+        if wishlists.filter(auctions=auctiondisplay, users=request.user):
+            onwithlist = False
+        if auctiondisplay.userauction == request.user.username:
+            endauction = True
 
     return render(request, "auctions/auctiondisplay.html", {
         "auctiondisplay": auctiondisplay,
@@ -121,19 +120,15 @@ def newbiding(request, auction_id):
         f.userbid = User.objects.get(pk=request.user.id)
         if bidding.is_valid():
             if f.bid > auction1.price:
-                print(f.auction)
                 auction1.price = f.bid
                 auction1.save()
                 f.save()
-                print("CHANGED PRICETAG")
                 return display(request, auction_id)
             else:
-                print("Bidding need to get higher!")
                 return render(request, "auctions/inputerror.html", {
                     "simplealert": f"Bidding need to get Higher than {auction1.price}"
                 })
     else:
-        print("invalid bidding")
         return display(request, auction_id)
 
 
@@ -147,15 +142,12 @@ def newcomment(request, auction_id):
         f.usercomment = User.objects.get(pk=request.user.id)
         if comment.is_valid():
             f.save()
-            print("COMMENT ADDED")
             return display(request, auction_id)
         else:
-            print("Invalid Comment")
             return render(request, "auctions/inputerror.html", {
                 "simplealert": "Invalid comment"
             })
     else:
-        print("Not METHOD POST COMMENT")
         return render(request, "auctions/index.html")
 
 
@@ -174,7 +166,6 @@ def wishlist(request, auction_id):
                             priceonmoment=auction1.price, users=user1)
         wish.save()
         return display(request, auction_id)
-        # Working i guess
 
 
 @login_required
@@ -186,7 +177,6 @@ def unwishlist(request, auction_id):
         for x in unwish:
             if x.auctions == auction1:
                 x.delete()
-        print(unwish)
         return display(request, auction_id)
         # WORKING
 
@@ -195,24 +185,17 @@ def unwishlist(request, auction_id):
 def endauction(request, auction_id):
     if request.method == 'POST':
         auction1 = AuctionListing.objects.get(pk=auction_id)
-        auctionfinal = AuctionFinished()
+
         bid = Bids.objects.all()
         lastbid = bid.filter(auction=auction1).last()
-        print(lastbid)
-        auctionfinal.title = auction1.title
-        auctionfinal.descript = auction1.descript
-        auctionfinal.price = auction1.price
-        auctionfinal.image = auction1.image
-        auctionfinal.userauction = auction1.userauction
-        auctionfinal.datecreate = auction1.datecreate
-        auctionfinal.category = auction1.category.categoryname
-        if lastbid:
-            auctionfinal.winner = lastbid.userbid
-        else:
-            auctionfinal.winner = "No Winner"
-        print(auctionfinal.winner)
 
-        auctionfinal.save()
+        if lastbid:
+            auction1.winner = lastbid.userbid.username
+        else:
+            auction1.winner = "No Winner"
+
+        auction1.save()
+        auction1.datefinished = date.today()
         auction1.openess = False
         auction1.save()
         return index(request)
@@ -224,10 +207,11 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
+        print(user)
         # Check if authentication successful
         if user is not None:
             login(request, user)
+            return index(request)
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django import forms
+from datetime import date
 
 
 class Category(models.Model):
@@ -23,28 +23,14 @@ class AuctionListing(models.Model):
     userauction = models.CharField(
         max_length=64)
     openess = models.BooleanField(default=True)
+    winner = models.CharField(max_length=64, default="")
+    datefinished = models.DateTimeField(default=date.today)
 
     class Meta:
         ordering = ['title']
 
     def __str__(self):
         return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}"
-
-
-class AuctionFinished(models.Model):
-    title = models.CharField(max_length=64)
-    descript = models.CharField(max_length=128)
-    image = models.URLField()
-    category = models.CharField(max_length=64)
-    price = models.FloatField(blank=0.0, default=1.0)
-    datecreate = models.DateTimeField()
-    datefinished = models.DateTimeField(auto_now_add=True)
-    userauction = models.CharField(
-        max_length=64)
-    winner = models.CharField(max_length=64, default="")
-
-    def __str__(self):
-        return f"Product: {self.title}, {self.descript}, Category: {self.category}, price: {self.price}, closing time: {self.datefinished}"
 
 
 # specify a title for the listing!, a text-based description!, and what the starting bid should be!. Users should

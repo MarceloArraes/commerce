@@ -6,7 +6,8 @@
 <div>
     <p>
         <br>
-    <h2>List of Active Auctions: </h1>
+
+    <h2>List of Active Auctions in {{category}} category: </h1>
         <ul>
             {% for listing in listofauctions %}
             {% if listing.openess %}
@@ -15,14 +16,15 @@
                 <div><img src={{listing.image}} alt="BLANK" style="width: 7%;"></div>
                 <a href="{% url 'auctiondisplay' listing.id %}">
                     <p>{{listing.title}}
-                        <br>{{listing.descript}}
-                        <br>{{listing.category}}
-                        <br>{{listing.price}}
-                        <br>Status: Open
-                        <br>
-                        <h6>Owner: {{listing.userauction}}</h6>
-                    </p>
                 </a>
+                <br>{{listing.descript}}
+                <br>{{listing.category}}
+                <br>{{listing.price}}
+                <br>Status: Open
+                <br>
+                <h6>Owner: {{listing.userauction}}</h6>
+                </p>
+
             </li>
             <hr>
             {% endif %}
@@ -33,15 +35,16 @@
 </div>
 
 
-{% if auctionfinish %}
+
 <p><br>
-<h2>Completed Auctions: </h2>
+<h2>Completed Auctions in {{category}} category: </h2>
 <div>
     {% for auction in auctionfinish %}
-    {% if auction.category == category %}
+    {% if auction.category.categoryname == category %}
     <div>
         <br><img src="{{auction.image}}" alt="BLANK" style="width: 7%;">
-        <br>Title: {{auction.title}}
+        <a href="{% url 'auctiondisplay' auction.id %}">
+            <br>Title: {{auction.title}}</a>
         <br>Description: {{auction.descript}}
         <br>Final Price: {{auction.price}}
         <br>Winner: {{auction.winner}}
@@ -53,9 +56,6 @@
     {% endfor %}
     </p>
 </div>
-{% endif %}
-
-
 
 
 

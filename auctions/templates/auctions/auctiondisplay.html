@@ -5,18 +5,32 @@
 {% if auctiondisplay.openess == False %}
 <div class="alert alert-info" role="alert">
     Auction Closed!
-</div>
-{% endif %}
+    {% if auctiondisplay.winner == user.username %}
+    <div class="alert alert-info" role="alert">
+        <h2>You {{user.username}} is THE WINNER!</h2>
+    </div>
+    {% elif auctiondisplay.winner == "No Winner" %}
+    <br>No Winner.
+    {% else %}
+    <br>Winner is user: {{auctiondisplay.winner}}!
+    {% endif %}
 
+</div>
+
+{% endif %}
 
 <h1>{{auctiondisplay.title}}</h1>
 
-
+<!--
+    Auction Data
+    -->
 <div>
     <img src="{{auctiondisplay.image}}" class="img-fluid img-thumbnail" style="max-width: 35%;" alt="BLANK">
     <h3>{{auctiondisplay.title}}</h3>
     <h2>
-        <p>{{auctiondisplay.descript}}<br>PRICE: ${{auctiondisplay.price}}<br>{{auctiondisplay.category}} </p>
+        <p>{{auctiondisplay.descript}}<br>PRICE: ${{auctiondisplay.price}}<br>Category: {{auctiondisplay.category}}
+            <br>Owner: {{auctiondisplay.userauction}} <br>Creation time: {{auctiondisplay.datecreate}}
+        </p>
     </h2>
 
     <!--
@@ -24,26 +38,26 @@
     -->
     {% if onwithlist and auctiondisplay.openess %}
     <p>
-    <form action="{% url 'wishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
+    <form action="{% url 'wishlist' auctiondisplay.id  %}" method="POST">
         {% csrf_token %}
-        <input class="form-check-input" type="submit" value="Add to wishlist" style="margin:2%;">
+        <input class="btn btn-primary" type="submit" value="Add to wishlist">
     </form>
     </p>
     {% elif auctiondisplay.openess == False %}
     {% else %}
     <p>
-    <form action="{% url 'unwishlist' auctiondisplay.id  %}" method="POST" style="padding:2%;">
+    <form action="{% url 'unwishlist' auctiondisplay.id  %}" method="POST">
         {% csrf_token %}
-        <input class="form-check-input" type="submit" value="UnWish" style="margin:2%;">
+        <input class="btn btn-primary" type="submit" value="UnWish">
     </form>
     </p>
     {% endif %}
 
     {%if endauction and auctiondisplay.openess %}
     <p>
-    <form action="{% url 'endauction' auctiondisplay.id  %}" method="POST" style="padding:2%;">
+    <form action="{% url 'endauction' auctiondisplay.id  %}" method="POST">
         {% csrf_token %}
-        <input class="form-check-input" type="submit" value="endauction" style="margin:2%;">
+        <input class="btn btn-primary" type="submit" value="Close Auction">
     </form>
     </p>
     {% endif %}
@@ -53,12 +67,15 @@
     <form action="{% url 'newcomment' auctiondisplay.id  %}" method="POST">
         {% csrf_token %}
         <div>{{comment.commentarea}}
-            <input type="submit" value="Comment" style="margin: 2%;">
+            <input type="submit" class="btn btn-primary" value="Comment">
         </div>
     </form>
     {% elif auctiondisplay.openess == False %}
     <br>
-    <h1>Auction Closed - no further comments alowed</h1>
+    <div class="alert alert-secondary" role="alert">
+        <h1>Auction Closed - no further comments alowed</h1>
+    </div>
+
     {% else %}
     <h2>
         <p><br><a class="alert alert-secondary" href="{% url 'login' %}" style="color: rgb(92, 0, 0);">Comment</a>
@@ -83,11 +100,13 @@
     <form action="{% url 'newbiding' auctiondisplay.id %}" method="POST">
         {% csrf_token %}
         {{ BidsForm.bid }}
-        <input type="submit" value="bid" style="margin: 2%;">
+        <input type="submit" class="btn btn-primary" value="bid">
     </form>
     {% elif auctiondisplay.openess == False %}
     <br>
-    <h1>Auction Closed - no further bidding alowed</h1>
+    <div class="alert alert-secondary" role="alert">
+        <h1>Auction Closed - no further bidding alowed</h1>
+    </div>
     {% else %}
     <h2>
         <p><br><a class="alert alert-secondary" href="{% url 'login' %}" style="color: rgb(92, 0, 0);">Make a
